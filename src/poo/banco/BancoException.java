@@ -1,3 +1,4 @@
+package poo.banco;
 
 public class BancoException extends RuntimeException {
 

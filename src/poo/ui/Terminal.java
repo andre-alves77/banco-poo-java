@@ -1,4 +1,5 @@
-package poo.banco;
+package poo.ui;
+import poo.banco.*;
 
 import java.util.List;
 import java.util.Scanner;
