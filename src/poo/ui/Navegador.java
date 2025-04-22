@@ -24,10 +24,24 @@ import java.util.*;
             }
         }
         
+        
 
         public void voltar() {
             if (historico.size() > 1) {
                 historico.pop();
+                Pagina anterior = historico.peek();
+                executarEAvoltar(anterior.getAcao());
+            } else {
+                encerrarPrograma();
+            }
+        }
+
+        public void voltar(int qtdPaginas) {
+            if (historico.size() > 1) {
+                while(qtdPaginas!=0 && historico.size() > 1) {
+                    historico.pop();
+                    qtdPaginas--;
+                }
                 Pagina anterior = historico.peek();
                 executarEAvoltar(anterior.getAcao());
             } else {
@@ -140,7 +154,7 @@ import java.util.*;
         }
 
         private void encerrarPrograma() {
-            mostrarMensagem("Acabouuuu", "Tchau senhor das areias. Na proxima vez eu implmento os submenus");
+            mostrarMensagem("Acabouuuu", "Tchau senhor das areias. Na proxima vez eu implemento os submenus");
             System.exit(0);
         }
     }

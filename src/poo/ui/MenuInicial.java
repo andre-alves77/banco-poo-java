@@ -60,29 +60,30 @@ public class MenuInicial {
         navegador.mostrarMensagem("Sucesso", "Cliente criado com sucesso!");
         navegador.voltar();
     }
-    
 
     private void selecionarCliente() {
-        List<Cliente> clientes = banco.getClientes();
-        if (clientes.isEmpty()) {
-            navegador.mostrarMensagem("Aviso", "Nenhum cliente cadastrado.");
-            navegador.voltar();
-            return;
-        }
+            List<Cliente> clientes = banco.getClientes();
+            if (clientes.isEmpty()) {
+                navegador.mostrarMensagem("Aviso", "Nenhum cliente cadastrado.");
+                navegador.voltar();
+                return;
+            }
 
-        ArrayList<Pagina> opcoes = new ArrayList<>();
-        for (Cliente c : clientes) {
-            opcoes.add(new Pagina(c.toString(), () -> {
-                atualCliente = c;
-                atualConta = null;
-                navegador.mostrarMensagem("Cliente selecionado", c.getName());
-                selecionarConta();
-            }));
-        }
-        opcoes.add(Pagina.SAIR);
+            ArrayList<Pagina> opcoes = new ArrayList<>();
+            for (Cliente c : clientes) {
+                opcoes.add(new Pagina(c.toString(), () -> {
+                    atualCliente = c;
+                    atualConta = null;
+                    navegador.mostrarMensagem("Cliente selecionado", c.getName());
 
-        navegador.mostrarMenu("Selecionar Cliente", "Escolha um cliente:", opcoes);
-    }
+                    Pagina menuConta = new Pagina("Menu Conta", this::selecionarConta);
+                    navegador.irPara(menuConta);
+                }));
+            }
+            opcoes.add(Pagina.SAIR);
+
+            navegador.mostrarMenu("Selecionar Cliente", "Escolha um cliente:", opcoes);
+        }
 
     private void listarClientes() {
         StringBuilder lista = new StringBuilder("Clientes:\n");
@@ -95,31 +96,24 @@ public class MenuInicial {
     }
 
     private void selecionarConta() {
-        if (atualCliente == null) {
-            navegador.mostrarMensagem("Erro", "Nenhum cliente selecionado.");
-            navegador.voltar();
-            return;
-        }
-
-        // Menu de contas
-        Pagina menuConta = new Pagina("Menu Conta", () -> {
-            ArrayList<Pagina> opcoes = new ArrayList<>();
-            opcoes.add(new Pagina("Criar Conta", this::criarConta));
-            opcoes.add(new Pagina("Listar Contas", this::listarContas));
-            opcoes.add(new Pagina("Selecionar Conta", this::selecionarContaCliente));
-            opcoes.add(new Pagina("Sair", ()->{
-                atualCliente = null;
-                atualConta = null;
-                navegador.voltar();
-                navegador.voltar();
-                navegador.mostrarMensagem("Sair", "Você saiu do cliente.");
-                iniciar();
-            }));
-            navegador.mostrarMenu("Conta", "Escolha uma opção:", opcoes);
-        });
-
-        navegador.irPara(menuConta);
+    if (atualCliente == null) {
+        navegador.mostrarMensagem("Erro", "Nenhum cliente selecionado.");
+        navegador.voltar();
+        return;
     }
+
+    ArrayList<Pagina> opcoes = new ArrayList<>();
+    opcoes.add(new Pagina("Criar Conta", this::criarConta));
+    opcoes.add(new Pagina("Listar Contas", this::listarContas));
+    opcoes.add(new Pagina("Selecionar Conta", this::selecionarContaCliente));
+    opcoes.add(new Pagina("Voltar", () -> {
+        atualCliente = null;
+        atualConta = null;
+        navegador.voltar(3);
+    }));
+
+    navegador.mostrarMenu("Conta", "Escolha uma opção:", opcoes);
+}
 
     private void criarConta() {
         if (atualCliente == null) {
@@ -182,22 +176,30 @@ public class MenuInicial {
             opcoes.add(new Pagina(c.toString(), () -> {
                 atualConta = c;
                 navegador.mostrarMensagem("Conta selecionada", c.getId());
-                // Após selecionar a conta, exibe o menu de operações
+                // Menu de operações
                 realizarOperacoes();
             }));
         }
-        opcoes.add(Pagina.SAIR);
+        opcoes.add(new Pagina("Voltar", () -> {
+            atualConta = null;
+            navegador.voltar(3);
+        }));
+
+
         navegador.mostrarMenu("Selecionar Conta", "Escolha uma conta:", opcoes);
     }
 
     private void realizarOperacoes() {
-        // Menu de operações (sacar, depositar, render)
+        // Menu de operações
         Pagina menuOperacoes = new Pagina("Menu Operações", () -> {
             ArrayList<Pagina> opcoes = new ArrayList<>();
             opcoes.add(new Pagina("Depositar", this::depositar));
             opcoes.add(new Pagina("Sacar", this::sacar));
             opcoes.add(new Pagina("Render", this::render));
-            opcoes.add(Pagina.SAIR);
+            opcoes.add(new Pagina("Voltar", () -> {
+                atualConta = null;
+                navegador.voltar(3);
+            }));
             navegador.mostrarMenu("Operações", "Escolha uma operação:", opcoes);
         });
 
